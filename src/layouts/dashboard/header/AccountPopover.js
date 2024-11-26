@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import AuthContext from '../../../context/AuthProvider';
 // mocks_
 import account from '../../../_mock/account';
 
@@ -25,6 +26,7 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover({ user }) {
+  const { logoutUser } = useContext(AuthContext);
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {
@@ -32,6 +34,7 @@ export default function AccountPopover({ user }) {
   };
 
   const handleClose = () => {
+    logoutUser();
     setOpen(null);
   };
 
