@@ -28,7 +28,7 @@ export default function Router() {
       {user ? (
         <>
           <Route path="/*" element={<PrivateRoutes />} />
-          <Route index element={<Navigate to="/user" />} />
+          <Route index element={<Navigate to="/dashboard" />} />
         </>
       ) : (
         <>

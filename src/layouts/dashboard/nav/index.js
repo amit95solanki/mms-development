@@ -83,13 +83,13 @@ export default function Nav({ openNav, onCloseNav }) {
         <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
           <Box
             component="img"
-            src="/assets/images/avatars/avatar_24.jpg"
+            src="/assets/images/avatars/softgenerate_logo.jpg"
             sx={{ width: 100, position: 'absolute', top: -50 }}
           />
 
           <Box sx={{ textAlign: 'center' }}>
             <Typography gutterBottom variant="subtitle2">
-              Develop by Amit Solanki
+              Developed by softgenerate.com
             </Typography>
 
             {/* <Typography variant="caption" sx={{ color: 'text.secondary' }}>

@@ -19,12 +19,54 @@ const PrivateRoutes = () => {
     <Routes>
       <Route element={user?.user?.role === 'admin' ? <MasterLayout /> : <SimpleLayout />}>
         {/* Redirect to Products after successful login/registration */}
-        <Route path="mms/*" element={<Navigate to="/user" />} />
+        <Route path="mms/*" element={<Navigate to="/dashboard" />} />
 
         {/* Pages */}
+        <Route
+          path="dashboard"
+          element={
+            <SuspenseFallback>
+              <DashboardAppPage />
+            </SuspenseFallback>
+          }
+        />
 
         <Route
           path="user"
+          element={
+            <SuspenseFallback>
+              <UserPage />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="pass-management"
+          element={
+            <SuspenseFallback>
+              <UserPage />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="warning"
+          element={
+            <SuspenseFallback>
+              <UserPage />
+            </SuspenseFallback>
+          }
+        />
+
+        <Route
+          path="report"
+          element={
+            <SuspenseFallback>
+              <UserPage />
+            </SuspenseFallback>
+          }
+        />
+
+        <Route
+          path="alert-notification"
           element={
             <SuspenseFallback>
               <UserPage />
