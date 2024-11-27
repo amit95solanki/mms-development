@@ -45,7 +45,7 @@ export function DashboardLayout() {
 
   return (
     <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} user={user} />
+      {/* <Header onOpenNav={() => setOpen(true)} user={user} /> */}
 
       {/* <Nav openNav={open} onCloseNav={() => setOpen(false)} /> */}
 

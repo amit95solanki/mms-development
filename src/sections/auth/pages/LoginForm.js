@@ -21,6 +21,7 @@ const validationSchema = yup.object({
 export default function LoginForm() {
   const { authTokens, setUser, setAuthTokens, user } = React.useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
 
   const formik = useFormik({
     initialValues: {
@@ -29,6 +30,7 @@ export default function LoginForm() {
     },
     validationSchema,
     onSubmit: (values) => {
+      setIsLoading(true); // Start loading
       const newUser = values;
       console.log('newUser', newUser);
       login(newUser)
@@ -37,10 +39,13 @@ export default function LoginForm() {
           setAuthTokens(data.accessToken);
           setUser(jwt(data.accessToken));
           localStorage.setItem('authTokens', JSON.stringify(data));
-          //   history.push('/');
+          // Navigate or do something else on success
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false); // Stop loading
         });
     },
   });
@@ -88,7 +93,14 @@ export default function LoginForm() {
           <Link to="/macho-man-shop/forget-password">Forgot password?</Link>
         </Stack>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained">
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          loading={isLoading} // Show spinner
+          disabled={isLoading} // Disable button
+        >
           Login
         </LoadingButton>
       </form>
