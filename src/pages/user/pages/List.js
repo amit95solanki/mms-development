@@ -2,6 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+
 // @mui
 import {
   Card,
@@ -33,8 +35,8 @@ import USERLIST from '../../../_mock/user';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
+  { id: 'company', label: 'society', alignRight: false },
+  { id: 'role', label: 'Aadhar Card', alignRight: false },
   { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
@@ -71,7 +73,8 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function UserPage() {
+export default function List() {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -147,9 +150,12 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button>
+
+          <Link to="/user/addnew">
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              New User
+            </Button>
+          </Link>
         </Stack>
 
         <Card>
@@ -213,7 +219,7 @@ export default function UserPage() {
                               size="large"
                               color="inherit"
                               onClick={() => {
-                                console.log('row', row);
+                                navigate(`/user/edit/123`); // Use the dynamic `id` from the row
                               }}
                             >
                               <Iconify icon={'eva:edit-fill'} />

@@ -9,7 +9,7 @@ import SimpleLayout from './layouts/simple/SimpleLayout';
 
 // Lazy loaded components
 
-const UserPage = lazy(() => import('./pages/user/pages/UserPage'));
+const UserPage = lazy(() => import('./pages/user/pages/index'));
 
 const PrivateRoutes = () => {
   const { user } = useContext(AuthContext);
@@ -32,7 +32,7 @@ const PrivateRoutes = () => {
         />
 
         <Route
-          path="user"
+          path="user/*"
           element={
             <SuspenseFallback>
               <UserPage />
