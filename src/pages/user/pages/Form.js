@@ -9,6 +9,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const validationSchema = yup.object({
   name: yup.string().required('Name is required'),
   gender: yup.string().required('Gender is required'),
+  phone: yup.string().required('Gender is required'),
+  working_place: yup.string().required('Gender is required'),
+  current_address: yup.string().required('Gender is required'),
+  permanent_address: yup.string().required('Gender is required'),
   maritalStatus: yup.string().when('gender', {
     is: 'female',
     then: yup.string().required('Marital Status is required'),
@@ -42,6 +46,10 @@ const Form = () => {
       maritalStatus: '',
       husband: '',
       children: '',
+      phone: '',
+      working_place: '',
+      current_address: '',
+      permanent_address: '',
     },
     validationSchema,
     onSubmit: (values) => {
@@ -105,6 +113,59 @@ const Form = () => {
             />
           </Grid>
           <Grid item xs={6}>
+            <TextField
+              fullWidth
+              id="phone"
+              name="phone"
+              label="Mobile No"
+              value={formik.values.phone}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.phone && Boolean(formik.errors.phone)}
+              helperText={formik.touched.phone && formik.errors.phone}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              id="working_place"
+              name="working_place"
+              label="Working Place Detail"
+              value={formik.values.working_place}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.working_place && Boolean(formik.errors.working_place)}
+              helperText={formik.touched.working_place && formik.errors.working_place}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              id="current_address"
+              name="current_address"
+              label="Current Address"
+              value={formik.values.current_address}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.current_address && Boolean(formik.errors.current_address)}
+              helperText={formik.touched.current_address && formik.errors.current_address}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              id="permanent_address"
+              name="permanent_address"
+              label="Permanent Address"
+              value={formik.values.permanent_address}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.permanent_address && Boolean(formik.errors.permanent_address)}
+              helperText={formik.touched.permanent_address && formik.errors.permanent_address}
+            />
+          </Grid>
+          <Grid item xs={6}>
             <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
               <InputLabel id="status-label">Status</InputLabel>
               <Select
@@ -126,7 +187,6 @@ const Form = () => {
               )}
             </FormControl>
           </Grid>
-
           <Grid item xs={6}>
             <FormControl fullWidth error={formik.touched.gender && Boolean(formik.errors.gender)}>
               <InputLabel id="gender-label">Gender</InputLabel>
@@ -146,7 +206,6 @@ const Form = () => {
               )}
             </FormControl>
           </Grid>
-
           {formik.values.gender === 'female' && (
             <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.maritalStatus && Boolean(formik.errors.maritalStatus)}>
@@ -168,7 +227,6 @@ const Form = () => {
               </FormControl>
             </Grid>
           )}
-
           {formik.values.gender === 'female' && formik.values.maritalStatus === 'married' && (
             <Grid item xs={6}>
               <TextField
@@ -184,7 +242,6 @@ const Form = () => {
               />
             </Grid>
           )}
-
           {formik.values.maritalStatus === 'married' && (
             <Grid item xs={6}>
               <TextField
@@ -200,7 +257,6 @@ const Form = () => {
               />
             </Grid>
           )}
-
           <Grid item xs={6}>
             <TextField
               fullWidth
