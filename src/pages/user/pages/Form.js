@@ -1,7 +1,7 @@
 import React from 'react';
-import { Formik, Form as FormikForm } from 'formik';
+import { Formik, Form as FormikForm, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Grid } from '@mui/material';
+import { TextField, Button, Box, Grid, MenuItem } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -10,6 +10,20 @@ const DynamicForm = () => {
 
   // Initial values
   const initialValues = {
+    familyDetails: [
+      {
+        relation: '',
+        name: '',
+        aadharNumber: '',
+        age: '',
+        photo: '',
+        phoneNumber: '',
+        occupation: '',
+        address: '',
+        workingPlace: '',
+        employmentStatus: '',
+      },
+    ],
     name: '',
     husbandName: '',
     address: '',
@@ -56,6 +70,123 @@ const DynamicForm = () => {
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
         {({ values, errors, touched, handleChange, handleBlur }) => (
           <FormikForm>
+            <FieldArray name="familyDetails">
+              {({ push, remove }) => (
+                <div>
+                  {values.familyDetails.map((familyMember, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        border: '1px solid #ccc',
+                        padding: '16px',
+                        marginBottom: '16px',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            name={`familyDetails[${index}].relation`}
+                            label="Relation"
+                            value={familyMember.relation}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={
+                              touched.familyDetails?.[index]?.relation &&
+                              Boolean(errors.familyDetails?.[index]?.relation)
+                            }
+                            helperText={
+                              touched.familyDetails?.[index]?.relation && errors.familyDetails?.[index]?.relation
+                            }
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            name={`familyDetails[${index}].name`}
+                            label="Name"
+                            value={familyMember.name}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={touched.familyDetails?.[index]?.name && Boolean(errors.familyDetails?.[index]?.name)}
+                            helperText={touched.familyDetails?.[index]?.name && errors.familyDetails?.[index]?.name}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            name={`familyDetails[${index}].aadharNumber`}
+                            label="Aadhar Number"
+                            value={familyMember.aadharNumber}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            name={`familyDetails[${index}].age`}
+                            label="Age"
+                            type="number"
+                            value={familyMember.age}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={touched.familyDetails?.[index]?.age && Boolean(errors.familyDetails?.[index]?.age)}
+                            helperText={touched.familyDetails?.[index]?.age && errors.familyDetails?.[index]?.age}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            name={`familyDetails[${index}].employmentStatus`}
+                            label="Employment Status"
+                            select
+                            value={familyMember.employmentStatus}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={
+                              touched.familyDetails?.[index]?.employmentStatus &&
+                              Boolean(errors.familyDetails?.[index]?.employmentStatus)
+                            }
+                            helperText={
+                              touched.familyDetails?.[index]?.employmentStatus &&
+                              errors.familyDetails?.[index]?.employmentStatus
+                            }
+                          >
+                            <MenuItem value="employed">Employed</MenuItem>
+                            <MenuItem value="unemployed">Unemployed</MenuItem>
+                          </TextField>
+                        </Grid>
+                      </Grid>
+                      <Button variant="outlined" color="error" sx={{ mt: 2 }} onClick={() => remove(index)}>
+                        Remove Family Member
+                      </Button>
+                    </Box>
+                  ))}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() =>
+                      push({
+                        relation: '',
+                        name: '',
+                        aadharNumber: '',
+                        age: '',
+                        photo: '',
+                        phoneNumber: '',
+                        occupation: '',
+                        address: '',
+                        workingPlace: '',
+                        employmentStatus: '',
+                      })
+                    }
+                  >
+                    Add Family Member
+                  </Button>
+                </div>
+              )}
+            </FieldArray>
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
