@@ -1,62 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { TextField, Button, Grid, Select, MenuItem, FormControl, InputLabel, Box, Avatar } from '@mui/material';
-
+import React from 'react';
+import { Formik, Form as FormikForm } from 'formik';
+import * as Yup from 'yup';
+import { TextField, Button, Box, Grid } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const validationSchema = yup.object({
-  name: yup.string().required('Name is required'),
-  gender: yup.string().required('Gender is required'),
-  phone: yup.string().required('Gender is required'),
-  working_place: yup.string().required('Gender is required'),
-  current_address: yup.string().required('Gender is required'),
-  permanent_address: yup.string().required('Gender is required'),
-  maritalStatus: yup.string().when('gender', {
-    is: 'female',
-    then: yup.string().required('Marital Status is required'),
-    otherwise: yup.string().nullable(),
-  }),
-  husband: yup.string().when(['gender', 'maritalStatus'], {
-    is: (gender, maritalStatus) => gender === 'female' && maritalStatus === 'married',
-    then: yup.string().required('Husband Name is required'),
-    otherwise: yup.string().nullable(),
-  }),
-  children: yup.string().when('maritalStatus', {
-    is: 'married',
-    then: yup.string().required('Children count is required'),
-    otherwise: yup.string().nullable(),
-  }),
-});
-
-const Form = () => {
+const DynamicForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const categories = ['Single', 'Married', 'Divorced', 'Widowed']; // Example categories
 
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      aadhar_no: '',
-      age: '',
-      status: '',
-      upload_photo: '',
-      gender: '',
-      maritalStatus: '',
-      husband: '',
-      children: '',
-      phone: '',
-      working_place: '',
-      current_address: '',
-      permanent_address: '',
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      console.log('Form submitted:', values);
-      navigate(-1); // Redirect to previous page
-    },
+  // Initial values
+  const initialValues = {
+    name: '',
+    husbandName: '',
+    address: '',
+    phoneNumber: '',
+    aadharNumber: '',
+    photo: '',
+    age: '',
+    vehicleDetails: '',
+    quarterNumber: '',
+    line1: '',
+    line2: '',
+    city: '',
+    state: '',
+    pincode: '',
+    country: '',
+    workingPlace: '',
+    role: '',
+  };
+
+  // Validation Schema
+  const validationSchema = Yup.object({
+    name: Yup.string().required('Name is required'),
   });
+
+  // Submit Handler
+  const handleSubmit = (values) => {
+    console.log('Form Data', values);
+  };
 
   const handleback = () => {
     navigate(-1);
@@ -71,217 +52,255 @@ const Form = () => {
           </Button>
         </Link>
       </Box>
-      <form onSubmit={formik.handleSubmit} style={{ padding: '20px' }}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id="name"
-              name="name"
-              label="Name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id="age"
-              name="age"
-              label="Age"
-              value={formik.values.age}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.age && Boolean(formik.errors.age)}
-              helperText={formik.touched.age && formik.errors.age}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id="aadhar_no"
-              name="aadhar_no"
-              label="Aadhar No"
-              value={formik.values.aadhar_no}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.aadhar_no && Boolean(formik.errors.aadhar_no)}
-              helperText={formik.touched.aadhar_no && formik.errors.aadhar_no}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id="phone"
-              name="phone"
-              label="Mobile No"
-              value={formik.values.phone}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.phone && Boolean(formik.errors.phone)}
-              helperText={formik.touched.phone && formik.errors.phone}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="working_place"
-              name="working_place"
-              label="Working Place Detail"
-              value={formik.values.working_place}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.working_place && Boolean(formik.errors.working_place)}
-              helperText={formik.touched.working_place && formik.errors.working_place}
-            />
-          </Grid>
 
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="current_address"
-              name="current_address"
-              label="Current Address"
-              value={formik.values.current_address}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.current_address && Boolean(formik.errors.current_address)}
-              helperText={formik.touched.current_address && formik.errors.current_address}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="permanent_address"
-              name="permanent_address"
-              label="Permanent Address"
-              value={formik.values.permanent_address}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.permanent_address && Boolean(formik.errors.permanent_address)}
-              helperText={formik.touched.permanent_address && formik.errors.permanent_address}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
-              <InputLabel id="status-label">Status</InputLabel>
-              <Select
-                labelId="status-label"
-                id="status"
-                name="status"
-                value={formik.values.status}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.touched.status && formik.errors.status && (
-                <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.status}</div>
-              )}
-            </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl fullWidth error={formik.touched.gender && Boolean(formik.errors.gender)}>
-              <InputLabel id="gender-label">Gender</InputLabel>
-              <Select
-                labelId="gender-label"
-                id="gender"
-                name="gender"
-                value={formik.values.gender}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              >
-                <MenuItem value="male">Male</MenuItem>
-                <MenuItem value="female">Female</MenuItem>
-              </Select>
-              {formik.touched.gender && formik.errors.gender && (
-                <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.gender}</div>
-              )}
-            </FormControl>
-          </Grid>
-          {formik.values.gender === 'female' && (
-            <Grid item xs={6}>
-              <FormControl fullWidth error={formik.touched.maritalStatus && Boolean(formik.errors.maritalStatus)}>
-                <InputLabel id="marital-status-label">Marital Status</InputLabel>
-                <Select
-                  labelId="marital-status-label"
-                  id="maritalStatus"
-                  name="maritalStatus"
-                  value={formik.values.maritalStatus}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                >
-                  <MenuItem value="married">Married</MenuItem>
-                  <MenuItem value="unmarried">Unmarried</MenuItem>
-                </Select>
-                {formik.touched.maritalStatus && formik.errors.maritalStatus && (
-                  <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.maritalStatus}</div>
-                )}
-              </FormControl>
+      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+        {({ values, errors, touched, handleChange, handleBlur }) => (
+          <FormikForm>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="name"
+                  name="name"
+                  label="Name"
+                  value={values.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.name && Boolean(errors.name)}
+                  helperText={touched.name && errors.name}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="husbandName"
+                  name="husbandName"
+                  label="husbandName"
+                  value={values.husbandName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.husbandName && Boolean(errors.husbandName)}
+                  helperText={touched.husbandName && errors.husbandName}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="address"
+                  name="address"
+                  label="address"
+                  value={values.address}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.address && Boolean(errors.address)}
+                  helperText={touched.address && errors.address}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  label="phoneNumber"
+                  value={values.phoneNumber}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.phoneNumber && Boolean(errors.phoneNumber)}
+                  helperText={touched.phoneNumber && errors.phoneNumber}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="aadharNumber"
+                  name="aadharNumber"
+                  label="aadharNumber"
+                  value={values.aadharNumber}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.aadharNumber && Boolean(errors.aadharNumber)}
+                  helperText={touched.aadharNumber && errors.aadharNumber}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="photo"
+                  name="photo"
+                  label="photo"
+                  value={values.photo}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.photo && Boolean(errors.photo)}
+                  helperText={touched.photo && errors.photo}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="age"
+                  name="age"
+                  label="age"
+                  value={values.age}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.age && Boolean(errors.age)}
+                  helperText={touched.age && errors.age}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="vehicleDetails"
+                  name="vehicleDetails"
+                  label="vehicleDetails"
+                  value={values.vehicleDetails}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.vehicleDetails && Boolean(errors.vehicleDetails)}
+                  helperText={touched.vehicleDetails && errors.vehicleDetails}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="quarterNumber"
+                  name="quarterNumber"
+                  label="quarterNumber"
+                  value={values.quarterNumber}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.quarterNumber && Boolean(errors.quarterNumber)}
+                  helperText={touched.quarterNumber && errors.quarterNumber}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="employmentStatus"
+                  name="employmentStatus"
+                  label="employmentStatus"
+                  value={values.employmentStatus}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.employmentStatus && Boolean(errors.employmentStatus)}
+                  helperText={touched.employmentStatus && errors.employmentStatus}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="line1"
+                  name="line1"
+                  label="line1"
+                  value={values.line1}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.line1 && Boolean(errors.line1)}
+                  helperText={touched.line1 && errors.line1}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="line2"
+                  name="line2"
+                  label="line2"
+                  value={values.line2}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.line2 && Boolean(errors.line2)}
+                  helperText={touched.line2 && errors.line2}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="city"
+                  name="city"
+                  label="city"
+                  value={values.city}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.city && Boolean(errors.city)}
+                  helperText={touched.city && errors.city}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="state"
+                  name="state"
+                  label="state"
+                  value={values.state}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.state && Boolean(errors.state)}
+                  helperText={touched.state && errors.state}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="pincode"
+                  name="pincode"
+                  label="pincode"
+                  value={values.pincode}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.pincode && Boolean(errors.pincode)}
+                  helperText={touched.pincode && errors.pincode}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="country"
+                  name="country"
+                  label="country"
+                  value={values.country}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.country && Boolean(errors.country)}
+                  helperText={touched.country && errors.country}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="role"
+                  name="role"
+                  label="role"
+                  value={values.role}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.role && Boolean(errors.role)}
+                  helperText={touched.role && errors.role}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="workingPlace"
+                  name="workingPlace"
+                  label="workingPlace"
+                  value={values.workingPlace}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.workingPlace && Boolean(errors.workingPlace)}
+                  helperText={touched.workingPlace && errors.workingPlace}
+                />
+              </Grid>
             </Grid>
-          )}
-          {formik.values.gender === 'female' && formik.values.maritalStatus === 'married' && (
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                id="husband"
-                name="husband"
-                label="Husband's Name"
-                value={formik.values.husband}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.husband && Boolean(formik.errors.husband)}
-                helperText={formik.touched.husband && formik.errors.husband}
-              />
-            </Grid>
-          )}
-          {formik.values.maritalStatus === 'married' && (
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                id="children"
-                name="children"
-                label="Number of Children"
-                value={formik.values.children}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.children && Boolean(formik.errors.children)}
-                helperText={formik.touched.children && formik.errors.children}
-              />
-            </Grid>
-          )}
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id="upload_photo"
-              name="upload_photo"
-              label="Upload Photo URL"
-              value={formik.values.upload_photo}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.upload_photo && Boolean(formik.errors.upload_photo)}
-              helperText={formik.touched.upload_photo && formik.errors.upload_photo}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            {formik.values.upload_photo && (
-              <Avatar alt="Uploaded" src={formik.values.upload_photo} sx={{ marginTop: '5px' }} />
-            )}
-          </Grid>
-        </Grid>
-        <Button color="primary" variant="contained" fullWidth type="submit" sx={{ marginTop: '20px' }}>
-          Submit
-        </Button>
-      </form>
+
+            <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }}>
+              Submit
+            </Button>
+          </FormikForm>
+        )}
+      </Formik>
     </>
   );
 };
 
-export default Form;
+export default DynamicForm;
