@@ -1,7 +1,7 @@
 import * as requestFromServer from './crud';
-import { productSlice, callTypes } from './slice';
+import { serventSlice, callTypes } from './slice';
 
-const { actions } = productSlice;
+const { actions } = serventSlice;
 
 export const fetchItems = (queryParams) => (dispatch) => {
   dispatch(actions.startCall({ callType: callTypes.list }));
@@ -9,9 +9,9 @@ export const fetchItems = (queryParams) => (dispatch) => {
     .findItems(queryParams)
 
     .then((response) => {
-      console.log(response);
-      const { totalPage: totalCount, products: entities } = response.data;
-      console.log('totalPage', totalCount, entities);
+      // console.log(response.data);
+      const { totalRecords: totalCount, data: entities } = response.data;
+      console.log('servent', totalCount, entities);
       dispatch(actions.itemsFetched({ totalCount, entities }));
     })
     .catch((error) => {

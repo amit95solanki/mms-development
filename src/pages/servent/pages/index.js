@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import List from './List';
 import Form from './Form';
 
-function UserPage() {
+function ServentPage() {
   return (
     <Suspense>
       <Routes>
@@ -15,4 +15,4 @@ function UserPage() {
   );
 }
 
-export default UserPage;
+export default ServentPage;

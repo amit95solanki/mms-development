@@ -25,8 +25,8 @@ export default function LoginForm() {
 
   const formik = useFormik({
     initialValues: {
-      email: 'maid@gmail.com',
-      password: '123456',
+      email: 'user1@example.com',
+      password: 'Simple@123',
     },
     validationSchema,
     onSubmit: (values) => {
@@ -36,9 +36,9 @@ export default function LoginForm() {
       login(newUser)
         .then(({ data }) => {
           console.log(data);
-          setAuthTokens(data.accessToken);
-          setUser(jwt(data.accessToken));
-          localStorage.setItem('authTokens', JSON.stringify(data));
+          setAuthTokens(data.token);
+          setUser(jwt(data.token));
+          localStorage.setItem('authTokens', JSON.stringify(data.token));
           // Navigate or do something else on success
         })
         .catch((err) => {

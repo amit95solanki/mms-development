@@ -14,6 +14,7 @@ import AccountPopover from './AccountPopover';
 import LanguagePopover from './LanguagePopover';
 import NotificationsPopover from './NotificationsPopover';
 import AuthContext from '../../../context/AuthProvider';
+import SocietySelect from './SocietySelect';
 
 Header.propTypes = {
   onOpenNav: PropTypes.func,
@@ -58,6 +59,7 @@ export default function Header({ onOpenNav }) {
         </IconButton>
 
         <Searchbar />
+
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack
@@ -69,6 +71,7 @@ export default function Header({ onOpenNav }) {
           }}
         >
           {/* <LanguagePopover /> */}
+          <SocietySelect />
           <NotificationsPopover />
           {user ? (
             <AccountPopover user={user} />

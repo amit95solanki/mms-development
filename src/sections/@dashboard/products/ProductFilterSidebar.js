@@ -57,16 +57,16 @@ ShopFilterSidebar.propTypes = {
 export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, setCategory, category }) {
   const [categoryData, setCategoryData] = React.useState([]);
 
-  React.useEffect(() => {
-    axios
-      .get('http://localhost:8000/api/v1/product/category')
-      .then((response) => {
-        setCategoryData(response.data.product);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+  // React.useEffect(() => {
+  //   axios
+  //     .get('http://localhost:8000/api/v1/product/category')
+  //     .then((response) => {
+  //       setCategoryData(response.data.product);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching data:', error);
+  //     });
+  // }, []);
 
   const handleChange = (event) => {
     setCategory(event.target.value);

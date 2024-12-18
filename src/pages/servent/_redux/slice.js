@@ -14,8 +14,8 @@ export const callTypes = {
   action: 'action',
 };
 
-export const productSlice = createSlice({
-  name: 'product',
+export const serventSlice = createSlice({
+  name: 'servent',
   initialState,
   reducers: {
     catchError: (state, action) => {

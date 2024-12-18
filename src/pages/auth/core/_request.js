@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const REGISTER_URL = `http://localhost:8000/api/v1/user/new`;
-export const LOGIN_URL = `/user/login`;
+export const LOGIN_URL = `/auth/login`;
 export const REQUEST_PASSWORD_URL = 'api/auth/forgot-password';
 
 export function login({ email, password }) {

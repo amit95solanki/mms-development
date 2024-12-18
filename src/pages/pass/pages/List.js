@@ -1,8 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 // @mui
 import {
@@ -21,6 +22,7 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Tooltip,
 } from '@mui/material';
 // components
 import Label from '../../../components/label';
@@ -30,15 +32,16 @@ import Scrollbar from '../../../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../../_mock/user';
+import * as actions from '../_redux/actions';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'society', alignRight: false },
-  { id: 'role', label: 'Aadhar Card', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'servantId', label: 'Name', alignRight: false },
+  { id: 'type', label: 'Type', alignRight: false },
+  { id: 'issueDate', label: 'Tssue Date', alignRight: false },
+  { id: 'expiryDate', label: 'Expiry Date', alignRight: false },
+  { id: 'passStatus', label: 'Pass Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 ];
 
@@ -74,6 +77,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function List() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
 
@@ -88,6 +92,22 @@ export default function List() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // console.log(page, order, selected, orderBy, filterName, rowsPerPage);
+
+  const { actionsLoading, entities, totalCount } = useSelector(
+    (state) => ({
+      actionsLoading: state.pass.actionsLoading,
+      entities: state.pass.entities,
+      totalCount: state.pass.totalCount,
+    }),
+    shallowEqual
+  );
+
+  console.log('===========', totalCount, entities);
+  useEffect(() => {
+    if (actions.fetchItems) {
+      dispatch(actions.fetchItems());
+    }
+  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -133,9 +153,9 @@ export default function List() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - entities.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(entities || [], getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -148,12 +168,12 @@ export default function List() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Pass
           </Typography>
 
-          <Link to="/user/addnew">
+          <Link to="/pass-management/addnew">
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-              New User
+              New Pass
             </Button>
           </Link>
         </Stack>
@@ -168,39 +188,39 @@ export default function List() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={totalCount}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const { id, servantId, type, issueDate, expiryDate, avatarUrl, passStatus } = row;
+                    const selectedUser = selected.indexOf(servantId) !== -1;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, servantId)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={servantId} src={avatarUrl} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {servantId}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{type}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{issueDate}</TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell align="left">{expiryDate}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <TableCell align="left">{passStatus}</TableCell>
                         </TableCell>
 
                         <TableCell align="right">
@@ -209,20 +229,47 @@ export default function List() {
                               size="large"
                               color="inherit"
                               onClick={() => {
-                                console.log('row', row);
+                                navigate(`/pass-management/edit/${row._id}`); // Use the dynamic `id` from the row
                               }}
                             >
-                              <Iconify icon={'eva:more-vertical-fill'} />
+                              <Tooltip title="Edit">
+                                <Iconify icon={'eva:edit-fill'} />
+                              </Tooltip>
                             </IconButton>
 
                             <IconButton
                               size="large"
                               color="inherit"
                               onClick={() => {
-                                navigate(`/user/edit/123`); // Use the dynamic `id` from the row
+                                console.log('row', row);
                               }}
                             >
-                              <Iconify icon={'eva:edit-fill'} />
+                              <Tooltip title="delete">
+                                <Iconify icon={'mdi:delete'} />
+                              </Tooltip>
+                            </IconButton>
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={() => {
+                                console.log('row', row);
+                              }}
+                            >
+                              <Tooltip title="warning">
+                                <Iconify icon={'mdi:warning'} />
+                              </Tooltip>
+                            </IconButton>
+
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={() => {
+                                console.log('row', row);
+                              }}
+                            >
+                              <Tooltip title="issue report">
+                                <Iconify icon={'mdi:report'} />
+                              </Tooltip>
                             </IconButton>
                           </Stack>
                         </TableCell>
@@ -266,7 +313,7 @@ export default function List() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={totalCount}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

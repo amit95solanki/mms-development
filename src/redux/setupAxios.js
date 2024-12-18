@@ -1,28 +1,34 @@
 export default function setupAxios(axios) {
-  let isRefreshing = false;
-  const refreshSubscribers = [];
-
-  /**
-   * Axios interceptors run before and after a request, allowing developers to modify requests and responses.
-   * For more details on axios interceptors, see https://github.com/axios/axios#interceptors
-   */
-
   axios.interceptors.request.use(
     (config) => {
-      const { accessToken } = JSON.parse(localStorage.getItem('authToken')) || {};
+      try {
+        // Retrieve and parse tokens from localStorage
+        const authTokens = localStorage.getItem('authTokens');
+        const parsedTokens = authTokens ? JSON.parse(authTokens) : null;
 
-      if (!config.baseURL) {
-        config.baseURL = 'https://backend-e-commerce-amit.onrender.com/api/v1/';
-      }
+        // Extract accessToken
+        const accessToken = parsedTokens?.accessToken || parsedTokens || null;
 
-      config.headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        // 'client-id': process.env.REACT_APP_SSO_CLIENT_ID,
-      };
+        // console.log('accessToken:', accessToken);
 
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
+        // Set the default baseURL if not already set
+        if (!config.baseURL) {
+          config.baseURL = 'https://himalayacarpets.co.in/servant-service/v1';
+        }
+
+        // Preserve existing headers and set defaults
+        config.headers = {
+          ...config.headers,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        };
+
+        // Attach Authorization header if accessToken exists
+        if (accessToken) {
+          config.headers.Authorization = `token ${accessToken}`;
+        }
+      } catch (error) {
+        console.error('Error setting Authorization header:', error);
       }
 
       return config;
@@ -33,55 +39,16 @@ export default function setupAxios(axios) {
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
-      const { config, response } = error;
+      const { response } = error;
       const { status } = response || {};
-      const { refreshToken } = JSON.parse(localStorage.getItem('authToken')) || {};
 
-      const originalRequest = config;
-
-      if (
-        status === 401 &&
-        originalRequest.url !== `${process.env.REACT_APP_API_URL}login` &&
-        originalRequest.url !== `${process.env.REACT_APP_API_URL}refresh-token`
-      ) {
-        if (!isRefreshing) {
-          isRefreshing = true;
-
-          axios
-            .post(`${process.env.REACT_APP_API_URL}refresh-token`, {
-              refresh: refreshToken,
-            })
-            .then((response) => {
-              localStorage.setItem('authToken', JSON.stringify(response.data));
-
-              isRefreshing = false;
-              onRefreshed(response.data.accessToken);
-            })
-            .catch(() => {
-              localStorage.removeItem('authToken');
-            });
-
-          const retryOriginalRequest = new Promise((resolve) => {
-            subscribeTokenRefresh((token) => {
-              // Replace the expired token and retry
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              resolve(axios(originalRequest));
-            });
-          });
-
-          return retryOriginalRequest;
-        }
+      if (status === 401) {
+        console.error('Unauthorized access. Please login again.');
+        localStorage.removeItem('authTokens'); // Remove tokens
+        window.location.href = '/login'; // Redirect to login page
       }
 
-      return Promise.reject(error); // Ensure consistent return
+      return Promise.reject(error);
     }
   );
-
-  const subscribeTokenRefresh = (cb) => {
-    refreshSubscribers.push(cb);
-  };
-
-  const onRefreshed = (token) => {
-    refreshSubscribers.forEach((cb) => cb(token));
-  };
 }

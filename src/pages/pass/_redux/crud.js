@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const resource = 'https://backend-e-commerce-amit.onrender.com/api/v1/product/all';
+export const resource = '/api/passes';
 
 // CREATE =>  POST: add a new item to the server
 export function createItem(data) {
@@ -14,29 +14,18 @@ export function cloneItem(id) {
 
 // READ
 export function getAllItems() {
-  return axios.get(resource);
+  // return axios.get(`${resource}/all`);
+  return axios.get(`auth-api/get-roles`);
 }
 
 export function getItemById(id) {
   return axios.get(`${resource}/${id}`);
 }
 
+// Method from server should return QueryResultsModel(items: any[], totalsCount: number)
+// items => filtered/sorted result
 export function findItems(queryParams) {
-  const { search, sort, category, price, page } = queryParams;
-
-  let base = `?search=${search}&page=${page}`;
-
-  const query = ({ price, sort, category }) => {
-    if (price) base += `&price=${price}`;
-    if (sort) base += `&sort=${sort}`;
-    if (category) base += `&category=${category}`;
-
-    return base;
-  };
-
-  const queryString = query({ price, search, sort, category, page });
-  console.log('queryString', queryString);
-  return axios.get(`${resource}${queryString}`);
+  return axios.get(`${resource}`);
 }
 
 export function findSelectItems(titleField) {
@@ -64,4 +53,8 @@ export function deleteItem(id) {
 // DELETE Items by ids
 export function deleteItems(ids) {
   return axios.post(`${resource}/delete`, { ids });
+}
+
+export function getItems() {
+  return axios.get('/get-roles');
 }

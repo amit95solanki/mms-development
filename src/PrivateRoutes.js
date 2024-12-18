@@ -1,23 +1,55 @@
-import React, { Suspense, lazy, useContext, useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
 import DashboardAppPage from './pages/DashboardAppPage';
 import MasterLayout from './layouts/MasterLayout';
-
 import AuthContext from './context/AuthProvider';
 import SimpleLayout from './layouts/simple/SimpleLayout';
 
 // Lazy loaded components
-
-const UserPage = lazy(() => import('./pages/user/pages/index'));
+const ServentPage = lazy(() => import('./pages/servent/pages/index'));
+const PassPage = lazy(() => import('./pages/pass/pages/index'));
 
 const PrivateRoutes = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logoutUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserById = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`https://himalayacarpets.co.in/servant-service/v1/api/users/${user.id}`);
+        setRole(response?.data?.data?.role);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchUserById();
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (error) {
+      // Navigate to the login page when an error occurs
+      logoutUser();
+    }
+  }, [error, navigate]);
+
+  if (loading) return <p>Loading...</p>;
+  if (!user) return <p>No user data found.</p>;
 
   return (
     <Routes>
-      <Route element={user?.user?.role === 'admin' ? <MasterLayout /> : <SimpleLayout />}>
+      <Route element={role === 'user' ? <MasterLayout /> : <SimpleLayout />}>
         {/* Redirect to Products after successful login/registration */}
         <Route path="mms/*" element={<Navigate to="/dashboard" />} />
 
@@ -30,20 +62,19 @@ const PrivateRoutes = () => {
             </SuspenseFallback>
           }
         />
-
         <Route
           path="user/*"
           element={
             <SuspenseFallback>
-              <UserPage />
+              <ServentPage />
             </SuspenseFallback>
           }
         />
         <Route
-          path="pass-management"
+          path="pass-management/*"
           element={
             <SuspenseFallback>
-              <UserPage />
+              <PassPage />
             </SuspenseFallback>
           }
         />
@@ -51,29 +82,26 @@ const PrivateRoutes = () => {
           path="warning"
           element={
             <SuspenseFallback>
-              <UserPage />
+              <ServentPage />
             </SuspenseFallback>
           }
         />
-
         <Route
           path="report"
           element={
             <SuspenseFallback>
-              <UserPage />
+              <ServentPage />
             </SuspenseFallback>
           }
         />
-
         <Route
           path="alert-notification"
           element={
             <SuspenseFallback>
-              <UserPage />
+              <ServentPage />
             </SuspenseFallback>
           }
         />
-
         <Route path="*" element={<Navigate to="/error/404" />} />
       </Route>
     </Routes>

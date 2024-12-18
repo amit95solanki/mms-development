@@ -5,7 +5,7 @@ import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
 import BlogPage from './pages/BlogPage';
-import UserPage from './pages/user/pages/List';
+import UserPage from './pages/servent/pages/List';
 import LoginPage from './pages/auth/LoginPage';
 import Page404 from './pages/Page404';
 
@@ -21,7 +21,7 @@ import AuthContext from './context/AuthProvider';
 
 export default function Router() {
   const { user } = useContext(AuthContext);
-  console.log('user', user);
+  // console.log('user', user);
 
   return (
     <Routes>

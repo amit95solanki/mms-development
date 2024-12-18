@@ -2,11 +2,29 @@ import React from 'react';
 import { Formik, Form as FormikForm, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { TextField, Button, Box, Grid, MenuItem } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import * as actions from '../_redux/actions';
 
 const DynamicForm = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    dispatch(actions.fetchItem(id));
+  }, [id, dispatch]);
+
+  const { actionsLoading, data } = useSelector(
+    (state) => ({
+      actionsLoading: state.servent.actionsLoading,
+      data: state.servent.data,
+    }),
+    shallowEqual
+  );
+
+  console.log('servent data', data?.data);
 
   // Initial values
   const initialValues = {
@@ -25,20 +43,25 @@ const DynamicForm = () => {
       },
     ],
     name: '',
-    husbandName: '',
-    address: '',
+
+    address: {
+      line1: '',
+      line2: '',
+      city: '',
+      state: '',
+      pincode: '',
+      country: '',
+    },
     phoneNumber: '',
     aadharNumber: '',
     photo: '',
+
+    employmentStatus: '',
+
     age: '',
     vehicleDetails: '',
     quarterNumber: '',
-    line1: '',
-    line2: '',
-    city: '',
-    state: '',
-    pincode: '',
-    country: '',
+
     workingPlace: '',
     role: '',
   };
@@ -67,8 +90,14 @@ const DynamicForm = () => {
       })
     ),
     name: Yup.string().required('Name is required'),
-    husbandName: Yup.string().required('this field is required'),
-    address: Yup.string().required('this field is required'),
+    address: Yup.object({
+      line1: Yup.string().required('Address Line 1 is required'),
+      line2: Yup.string().required('Address Line 2 is required'),
+      city: Yup.string().required('City is required'),
+      state: Yup.string().required('State is required'),
+      pincode: Yup.string().required('Pincode is required'),
+      country: Yup.string().required('Country is required'),
+    }),
     phoneNumber: Yup.string().required('this field is required'),
     aadharNumber: Yup.string().required('this field is required'),
     photo: Yup.string().required('this field is required'),
@@ -86,9 +115,55 @@ const DynamicForm = () => {
     role: Yup.string().required('this field is required'),
   });
 
-  // Submit Handler
   const handleSubmit = (values) => {
     console.log('Form Data', values);
+
+    const payload = {
+      name: values.name,
+
+      address: {
+        line1: values.addressLine1,
+        line2: values.addressLine2,
+        city: values.city,
+        state: values.state,
+        pincode: values.pincode,
+        country: values.country || 'India',
+      },
+      phoneNumber: values.phoneNumber,
+      aadharNumber: values.aadharNumber,
+      photo: values.photo,
+      age: values.age,
+      vehicleDetails: values.vehicleDetails,
+      quarterNumber: values.quarterNumber,
+      employmentStatus: values.employmentStatus,
+      workingPlace: values.workingPlace,
+      familyDetails: values.familyDetails?.map((family) => ({
+        relation: family.relation,
+        name: family.name,
+        aadharNumber: family.aadharNumber,
+        age: family.age,
+        photo: family.photo,
+        phoneNumber: family.phoneNumber,
+        occupation: family.occupation,
+        address: family.address,
+        workingPlace: family.workingPlace,
+        employmentStatus: family.employmentStatus,
+      })),
+      passes: values.passes,
+      warnings: values.warnings,
+      alerts: values.alerts,
+      role: values.role,
+      societies: values.societies,
+      households: values.households,
+      isActive: values.isActive !== undefined ? values.isActive : true,
+    };
+
+    // Dispatch create or update action
+    if (!id) {
+      dispatch(actions.createItem(payload)).then(() => handleback());
+    } else {
+      dispatch(actions.updateItem({ ...payload, id })).then(() => handleback());
+    }
   };
 
   const handleback = () => {
@@ -106,9 +181,14 @@ const DynamicForm = () => {
           </Link>
         </Box>
 
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={data?.data || initialValues}
+          enableReinitialize // Make sure it's a boolean true, not a string "true"
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
           {({ values, errors, touched, handleChange, handleBlur }) => (
-            <FormikForm>
+            <FormikForm onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <TextField
@@ -123,32 +203,7 @@ const DynamicForm = () => {
                     helperText={touched.name && errors.name}
                   />
                 </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    id="husbandName"
-                    name="husbandName"
-                    label="husbandName"
-                    value={values.husbandName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.husbandName && Boolean(errors.husbandName)}
-                    helperText={touched.husbandName && errors.husbandName}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    id="address"
-                    name="address"
-                    label="address"
-                    value={values.address}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.address && Boolean(errors.address)}
-                    helperText={touched.address && errors.address}
-                  />
-                </Grid>
+
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
@@ -247,93 +302,99 @@ const DynamicForm = () => {
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
-                    id="line1"
-                    name="line1"
-                    label="line1"
-                    value={values.line1}
+                    id="address.line1"
+                    name="address.line1"
+                    label="Address Line 1"
+                    value={values.address.line1}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.line1 && Boolean(errors.line1)}
-                    helperText={touched.line1 && errors.line1}
+                    error={touched.address?.line1 && Boolean(errors.address?.line1)}
+                    helperText={touched.address?.line1 && errors.address?.line1}
                   />
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
-                    id="line2"
-                    name="line2"
-                    label="line2"
-                    value={values.line2}
+                    id="address.line2"
+                    name="address.line2"
+                    label="Address Line 2"
+                    value={values.address.line2}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.line2 && Boolean(errors.line2)}
-                    helperText={touched.line2 && errors.line2}
+                    error={touched.address?.line2 && Boolean(errors.address?.line2)}
+                    helperText={touched.address?.line2 && errors.address?.line2}
                   />
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
-                    id="city"
-                    name="city"
-                    label="city"
-                    value={values.city}
+                    id="address.city"
+                    name="address.city"
+                    label="City"
+                    value={values.address.city}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.city && Boolean(errors.city)}
-                    helperText={touched.city && errors.city}
+                    error={touched.address?.city && Boolean(errors.address?.city)}
+                    helperText={touched.address?.city && errors.address?.city}
                   />
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
-                    id="state"
-                    name="state"
-                    label="state"
-                    value={values.state}
+                    id="address.state"
+                    name="address.state"
+                    label="State"
+                    value={values.address.state}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.state && Boolean(errors.state)}
-                    helperText={touched.state && errors.state}
+                    error={touched.address?.state && Boolean(errors.address?.state)}
+                    helperText={touched.address?.state && errors.address?.state}
                   />
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
-                    id="pincode"
-                    name="pincode"
-                    label="pincode"
-                    value={values.pincode}
+                    id="address.pincode"
+                    name="address.pincode"
+                    label="Pincode"
+                    value={values.address.pincode}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.pincode && Boolean(errors.pincode)}
-                    helperText={touched.pincode && errors.pincode}
+                    error={touched.address?.pincode && Boolean(errors.address?.pincode)}
+                    helperText={touched.address?.pincode && errors.address?.pincode}
                   />
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
-                    id="country"
-                    name="country"
-                    label="country"
-                    value={values.country}
+                    id="address.country"
+                    name="address.country"
+                    label="Country"
+                    value={values.address.country}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.country && Boolean(errors.country)}
-                    helperText={touched.country && errors.country}
+                    error={touched.address?.country && Boolean(errors.address?.country)}
+                    helperText={touched.address?.country && errors.address?.country}
                   />
                 </Grid>
-                <Grid item xs={6}>
+
+                <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    id="role"
                     name="role"
-                    label="role"
+                    label="Role"
+                    select
                     value={values.role}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.role && Boolean(errors.role)}
                     helperText={touched.role && errors.role}
-                  />
+                  >
+                    <MenuItem value="maid">Maid</MenuItem>
+                    <MenuItem value="cleaner">Cleaner</MenuItem>
+                    <MenuItem value="guard">Guard</MenuItem>
+                    <MenuItem value="driver">Driver</MenuItem>
+                  </TextField>
                 </Grid>
                 <Grid item xs={6}>
                   <TextField

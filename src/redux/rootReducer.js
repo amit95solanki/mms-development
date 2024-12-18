@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
-// import { productSlice } from '../pages/product/_redux/slice';
-// import { cartSlice } from '../pages/cart/cartSlice';
+import { serventSlice } from '../pages/servent/_redux/slice';
+import { passSlice } from '../pages/pass/_redux/slice';
 // Add an empty line after import statement
 const rootReducer = combineReducers({
   // Combine reducers here
-  // product: productSlice.reducer,
-  // cart: cartSlice.reducer,
+  servent: serventSlice.reducer,
+  pass: passSlice.reducer,
 });
 
 export default rootReducer;
