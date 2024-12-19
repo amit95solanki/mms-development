@@ -6,12 +6,15 @@ export const useDataContext = () => useContext(DataContext);
 
 const DataProvider = ({ children }) => {
   const [search, setSearch] = useState('');
+  const [society, setSociety] = useState(null);
   const ProvidedValue = useMemo(
     () => ({
       search,
       setSearch,
+      society,
+      setSociety,
     }),
-    [search, setSearch]
+    [search, setSearch, society, setSociety]
   );
 
   return <DataContext.Provider value={ProvidedValue}>{children}</DataContext.Provider>;

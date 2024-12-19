@@ -39,7 +39,7 @@ import * as actions from '../_redux/actions';
 const TABLE_HEAD = [
   { id: 'servantId', label: 'Name', alignRight: false },
   { id: 'type', label: 'Type', alignRight: false },
-  { id: 'issueDate', label: 'Tssue Date', alignRight: false },
+  { id: 'issueDate', label: 'Issue Date', alignRight: false },
   { id: 'expiryDate', label: 'Expiry Date', alignRight: false },
   { id: 'passStatus', label: 'Pass Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
@@ -200,12 +200,12 @@ export default function List() {
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, servantId)} />
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
+                          <Stack direction="row" alignItems="center" spacing={2} sx={{ paddingLeft: '5px' }}>
                             <Avatar alt={servantId} src={avatarUrl} />
                             <Typography variant="subtitle2" noWrap>
                               {servantId}
@@ -215,9 +215,21 @@ export default function List() {
 
                         <TableCell align="left">{type}</TableCell>
 
-                        <TableCell align="left">{issueDate}</TableCell>
+                        <TableCell align="left">
+                          {new Intl.DateTimeFormat('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                          }).format(new Date(issueDate))}
+                        </TableCell>
 
-                        <TableCell align="left">{expiryDate}</TableCell>
+                        <TableCell align="left">
+                          {new Intl.DateTimeFormat('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                          }).format(new Date(expiryDate))}
+                        </TableCell>
 
                         <TableCell align="left">
                           <TableCell align="left">{passStatus}</TableCell>
@@ -225,6 +237,18 @@ export default function List() {
 
                         <TableCell align="right">
                           <Stack direction="row" spacing={0}>
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={() => {
+                                console.log('row', row);
+                              }}
+                            >
+                              <Tooltip title="view">
+                                <Iconify icon={'mdi:eye'} />
+                              </Tooltip>
+                            </IconButton>
+
                             <IconButton
                               size="large"
                               color="inherit"
@@ -246,29 +270,6 @@ export default function List() {
                             >
                               <Tooltip title="delete">
                                 <Iconify icon={'mdi:delete'} />
-                              </Tooltip>
-                            </IconButton>
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                console.log('row', row);
-                              }}
-                            >
-                              <Tooltip title="warning">
-                                <Iconify icon={'mdi:warning'} />
-                              </Tooltip>
-                            </IconButton>
-
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                console.log('row', row);
-                              }}
-                            >
-                              <Tooltip title="issue report">
-                                <Iconify icon={'mdi:report'} />
                               </Tooltip>
                             </IconButton>
                           </Stack>

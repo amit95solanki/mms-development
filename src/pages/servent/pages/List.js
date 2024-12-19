@@ -200,12 +200,12 @@ export default function List() {
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
+                          <Stack direction="row" alignItems="center" spacing={2} sx={{ paddingLeft: '5px' }}>
                             <Avatar alt={name} src={avatarUrl} />
                             <Typography variant="subtitle2" noWrap>
                               {name}
@@ -229,6 +229,17 @@ export default function List() {
                               size="large"
                               color="inherit"
                               onClick={() => {
+                                console.log('row', row);
+                              }}
+                            >
+                              <Tooltip title="view">
+                                <Iconify icon={'mdi:eye'} />
+                              </Tooltip>
+                            </IconButton>
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={() => {
                                 navigate(`/user/edit/${row._id}`); // Use the dynamic `id` from the row
                               }}
                             >
@@ -245,29 +256,6 @@ export default function List() {
                             >
                               <Tooltip title="delete">
                                 <Iconify icon={'mdi:delete'} />
-                              </Tooltip>
-                            </IconButton>
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                console.log('row', row);
-                              }}
-                            >
-                              <Tooltip title="warning">
-                                <Iconify icon={'mdi:warning'} />
-                              </Tooltip>
-                            </IconButton>
-
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                console.log('row', row);
-                              }}
-                            >
-                              <Tooltip title="issue report">
-                                <Iconify icon={'mdi:report'} />
                               </Tooltip>
                             </IconButton>
                           </Stack>
@@ -310,7 +298,7 @@ export default function List() {
           </Scrollbar>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5, 50, 100, 250, 500]}
             component="div"
             count={totalCount}
             rowsPerPage={rowsPerPage}

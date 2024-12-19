@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Select from 'react-select';
+import { DataContext } from '../../../context/globalContext';
 
 const options = [
   { value: 'Society 1', label: 'Society 1' },
@@ -8,13 +9,21 @@ const options = [
 ];
 
 const SocietySelect = () => {
+  const { society, setSociety } = useContext(DataContext);
+
   const [selectedOption, setSelectedOption] = useState(options[0]);
+
+  // Set the initial value of setSociety when the component mounts
+  useEffect(() => {
+    setSociety(selectedOption ? selectedOption.value : null);
+  }, [selectedOption, setSociety]);
 
   const handleChange = (selectedOption) => {
     setSelectedOption(selectedOption);
-    console.log('Selected option:', selectedOption);
+    setSociety(selectedOption ? selectedOption.value : null); // Update context on change
   };
 
+  console.log('Selected option:', society);
   const customStyles = {
     control: (base) => ({
       ...base,

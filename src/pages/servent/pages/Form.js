@@ -91,7 +91,9 @@ const DynamicForm = () => {
     }),
     name: Yup.string().required('Name is required'),
     phoneNumber: Yup.string().required('Phone number is required'),
-    aadharNumber: Yup.number().required('Aadhar Number is required'),
+    aadharNumber: Yup.string()
+      .matches(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
+      .required('Aadhar Number is required'),
     photo: Yup.string().required('Photo is required'),
 
     age: Yup.number().required('Age Number is required'),
@@ -102,15 +104,21 @@ const DynamicForm = () => {
     employmentStatus: Yup.string().required('Employment Status is required'),
   });
 
-  const handleSubmit = (values) => {
+  const handleSubmit = (values, { resetForm }) => {
     console.log('Form Data', values);
+
     if (!id) {
-      dispatch(actions.createItem(values)).then(() => handleBack());
+      dispatch(actions.createItem(values)).then(() => {
+        handleBack(); // Navigate back or handle as needed
+        resetForm(); // Reset the form values
+      });
     } else {
-      dispatch(actions.updateItem({ ...values, id })).then(() => handleBack());
+      dispatch(actions.updateItem({ ...values, id })).then(() => {
+        handleBack(); // Navigate back or handle as needed
+        resetForm(); // Reset the form values
+      });
     }
   };
-
   const handleBack = () => {
     navigate(-1);
   };
@@ -124,15 +132,15 @@ const DynamicForm = () => {
       </Box>
 
       <Formik
-        initialValues={data?.data || initialValues}
+        initialValues={id ? data?.data : initialValues}
         enableReinitialize
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, errors, touched, handleChange, handleBlur }) => {
-          console.log('Current Values:', values);
-          console.log('Validation Errors:', errors);
-          console.log('Touched Fields:', touched);
+        {({ values, errors, touched, handleChange, handleBlur, resetForm }) => {
+          // console.log('Current Values:', values);
+          // console.log('Validation Errors:', errors);
+          // console.log('Touched Fields:', touched);
           return (
             <FormikForm>
               <Grid container spacing={2}>
@@ -384,8 +392,8 @@ const DynamicForm = () => {
                   )}
                 </FieldArray>
               </Grid>
-              <Button type="submit" variant="contained" sx={{ mt: 4 }}>
-                Submit
+              <Button type="submit" variant="contained" fullWidth sx={{ mt: 4 }}>
+                {id ? 'Update' : 'Submit'}
               </Button>
             </FormikForm>
           );
