@@ -10,6 +10,7 @@ import SimpleLayout from './layouts/simple/SimpleLayout';
 // Lazy loaded components
 const ServentPage = lazy(() => import('./pages/servent/pages/index'));
 const PassPage = lazy(() => import('./pages/pass/pages/index'));
+const WarningPage = lazy(() => import('./pages/warning/pages/index'));
 
 const PrivateRoutes = () => {
   const { user, logoutUser } = useContext(AuthContext);
@@ -35,7 +36,7 @@ const PrivateRoutes = () => {
     if (user?.id) {
       fetchUserById();
     }
-  }, [user?.id]);
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -49,7 +50,7 @@ const PrivateRoutes = () => {
 
   return (
     <Routes>
-      <Route element={role === 'user' ? <MasterLayout /> : <SimpleLayout />}>
+      <Route element={<MasterLayout />}>
         {/* Redirect to Products after successful login/registration */}
         <Route path="mms/*" element={<Navigate to="/dashboard" />} />
 
@@ -79,10 +80,10 @@ const PrivateRoutes = () => {
           }
         />
         <Route
-          path="warning"
+          path="warning/*"
           element={
             <SuspenseFallback>
-              <ServentPage />
+              <WarningPage />
             </SuspenseFallback>
           }
         />

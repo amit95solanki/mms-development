@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-export const resource = '/api/savants';
+export const resource = '/api/warnings';
 
 // CREATE =>  POST: add a new item to the server
 export function createItem(data) {
-  console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%', data);
   return axios.post(resource, data);
 }
 
