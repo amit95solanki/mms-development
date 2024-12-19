@@ -104,11 +104,11 @@ const DynamicForm = () => {
 
   const handleSubmit = (values) => {
     console.log('Form Data', values);
-    // if (!id) {
-    //   dispatch(actions.createItem(values)).then(() => handleBack());
-    // } else {
-    //   dispatch(actions.updateItem({ ...values, id })).then(() => handleBack());
-    // }
+    if (!id) {
+      dispatch(actions.createItem(values)).then(() => handleBack());
+    } else {
+      dispatch(actions.updateItem({ ...values, id })).then(() => handleBack());
+    }
   };
 
   const handleBack = () => {
