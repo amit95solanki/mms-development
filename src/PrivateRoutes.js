@@ -11,6 +11,7 @@ import SimpleLayout from './layouts/simple/SimpleLayout';
 const ServentPage = lazy(() => import('./pages/servent/pages/index'));
 const PassPage = lazy(() => import('./pages/pass/pages/index'));
 const WarningPage = lazy(() => import('./pages/warning/pages/index'));
+const SearchSarventDetailPage = lazy(() => import('./pages/SarventSearch'));
 
 const PrivateRoutes = () => {
   const { user, logoutUser } = useContext(AuthContext);
@@ -100,6 +101,14 @@ const PrivateRoutes = () => {
           element={
             <SuspenseFallback>
               <ServentPage />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="search-sarvent/:id"
+          element={
+            <SuspenseFallback>
+              <SearchSarventDetailPage />
             </SuspenseFallback>
           }
         />

@@ -10,6 +10,7 @@ function ServentPage() {
         <Route path="/" element={<List />} />
         <Route path="/addnew" element={<Form />} />
         <Route path="/edit/:id" element={<Form />} />
+        <Route path="/view/:id" element={<Form />} />
       </Routes>
     </Suspense>
   );

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Input, Slide, Button, IconButton, InputAdornment, ClickAwayListener } from '@mui/material';
@@ -27,12 +28,15 @@ const StyledSearchbar = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     height: HEADER_DESKTOP,
     padding: theme.spacing(0, 5),
+    left: 250,
+    width: '80%',
   },
 }));
 
 // ----------------------------------------------------------------------
 
 export default function Searchbar() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -41,6 +45,10 @@ export default function Searchbar() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handelSearch = () => {
+    navigate('search-sarvent/1233');
   };
 
   return (
@@ -66,8 +74,11 @@ export default function Searchbar() {
               }
               sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
             />
-            <Button variant="contained" onClick={handleClose}>
+            <Button variant="contained" onClick={handelSearch} sx={{ marginRight: 1 }}>
               Search
+            </Button>
+            <Button variant="contained" onClick={handleClose}>
+              Close
             </Button>
           </StyledSearchbar>
         </Slide>

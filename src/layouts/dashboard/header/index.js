@@ -58,10 +58,8 @@ export default function Header({ onOpenNav }) {
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
 
-        <Searchbar />
-
         <Box sx={{ flexGrow: 1 }} />
-
+        <Searchbar />
         <Stack
           direction="row"
           alignItems="center"
@@ -79,7 +77,7 @@ export default function Header({ onOpenNav }) {
             <Button
               variant="outlined"
               onClick={() => {
-                navigate('/macho-man-shop/login');
+                navigate('');
               }}
             >
               login

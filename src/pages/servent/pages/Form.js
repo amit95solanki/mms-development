@@ -2,13 +2,14 @@ import React from 'react';
 import { Formik, Form as FormikForm, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { TextField, Button, Box, Grid, MenuItem } from '@mui/material';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import * as actions from '../_redux/actions';
 
 const DynamicForm = () => {
   const { id } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -123,6 +124,10 @@ const DynamicForm = () => {
     navigate(-1);
   };
 
+  console.log('data?.data', data?.data);
+  const segments = location.pathname.split('/');
+  const view = segments[2]; // Assuming 'view' is always the 3rd segment
+
   return (
     <Box sx={{ padding: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'end', marginBottom: '20px' }}>
@@ -132,7 +137,7 @@ const DynamicForm = () => {
       </Box>
 
       <Formik
-        initialValues={id ? data?.data : initialValues}
+        initialValues={data?.data || initialValues}
         enableReinitialize
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -147,6 +152,7 @@ const DynamicForm = () => {
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
+                    disabled={view === 'view'}
                     id="name"
                     name="name"
                     label="Name"
@@ -165,6 +171,7 @@ const DynamicForm = () => {
                     type="number"
                     name="phoneNumber"
                     label="Phone Number"
+                    disabled={view === 'view'}
                     value={values.phoneNumber}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -176,6 +183,7 @@ const DynamicForm = () => {
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
+                    disabled={view === 'view'}
                     id="aadharNumber"
                     name="aadharNumber"
                     label="Aadhar Number"
@@ -193,6 +201,7 @@ const DynamicForm = () => {
                     id="photo"
                     name="photo"
                     label="Photo"
+                    disabled={view === 'view'}
                     value={values.photo}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -208,6 +217,7 @@ const DynamicForm = () => {
                     name="age"
                     type="number"
                     label="Age"
+                    disabled={view === 'view'}
                     value={values.age}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -222,6 +232,7 @@ const DynamicForm = () => {
                     id="vehicleDetails"
                     name="vehicleDetails"
                     label="Vehicle Details"
+                    disabled={view === 'view'}
                     value={values.vehicleDetails}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -236,6 +247,7 @@ const DynamicForm = () => {
                     id="quarterNumber"
                     name="quarterNumber"
                     label="Quarter Number"
+                    disabled={view === 'view'}
                     value={values.quarterNumber}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -250,6 +262,7 @@ const DynamicForm = () => {
                     id="workingPlace"
                     name="workingPlace"
                     label="Working Place"
+                    disabled={view === 'view'}
                     value={values.workingPlace}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -265,6 +278,7 @@ const DynamicForm = () => {
                     label="Role"
                     select
                     value={values.role}
+                    disabled={view === 'view'}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.role && Boolean(errors.role)}
@@ -282,6 +296,7 @@ const DynamicForm = () => {
                     fullWidth
                     name="employmentStatus"
                     label="Employment Status"
+                    disabled={view === 'view'}
                     select
                     value={values.employmentStatus}
                     onChange={handleChange}
@@ -301,6 +316,7 @@ const DynamicForm = () => {
                       fullWidth
                       id={`address.${field}`}
                       name={`address.${field}`}
+                      disabled={view === 'view'}
                       label={field.replace(/^\w/, (c) => c.toUpperCase())}
                       value={values.address[field]}
                       onChange={handleChange}
@@ -326,6 +342,7 @@ const DynamicForm = () => {
                                   label={field.replace(/^\w/, (c) => c.toUpperCase())}
                                   value={familyMember[field]}
                                   onChange={handleChange}
+                                  disabled={view === 'view'}
                                   onBlur={handleBlur}
                                   error={
                                     touched.familyDetails?.[index]?.[field] &&
@@ -344,6 +361,7 @@ const DynamicForm = () => {
                                 name={`familyDetails[${index}].employmentStatus`}
                                 label="Employment Status"
                                 select
+                                disabled={view === 'view'}
                                 value={familyMember.employmentStatus}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -361,7 +379,13 @@ const DynamicForm = () => {
                               </TextField>
                             </Grid>
                             <Grid item xs={12}>
-                              <Button variant="outlined" color="error" onClick={() => remove(index)} sx={{ mt: 2 }}>
+                              <Button
+                                disabled={view === 'view'}
+                                variant="outlined"
+                                color="error"
+                                onClick={() => remove(index)}
+                                sx={{ mt: 2 }}
+                              >
                                 Remove Member
                               </Button>
                             </Grid>
@@ -370,6 +394,7 @@ const DynamicForm = () => {
                       ))}
                       <Button
                         variant="outlined"
+                        disabled={view === 'view'}
                         onClick={() =>
                           push({
                             relation: '',
@@ -392,7 +417,7 @@ const DynamicForm = () => {
                   )}
                 </FieldArray>
               </Grid>
-              <Button type="submit" variant="contained" fullWidth sx={{ mt: 4 }}>
+              <Button disabled={view === 'view'} type="submit" variant="contained" fullWidth sx={{ mt: 4 }}>
                 {id ? 'Update' : 'Submit'}
               </Button>
             </FormikForm>

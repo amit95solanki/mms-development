@@ -79,6 +79,7 @@ function applySortFilter(array, comparator, query) {
 export default function List() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -229,7 +230,7 @@ export default function List() {
                               size="large"
                               color="inherit"
                               onClick={() => {
-                                console.log('row', row);
+                                navigate(`/user/view/${row._id}`); // Use the dynamic `id` from the row
                               }}
                             >
                               <Tooltip title="view">
